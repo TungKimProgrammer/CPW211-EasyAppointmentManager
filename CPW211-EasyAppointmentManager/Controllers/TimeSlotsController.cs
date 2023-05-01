@@ -22,9 +22,20 @@ namespace CPW211_EasyAppointmentManager.Controllers
         // GET: TimeSlots
         public async Task<IActionResult> Index()
         {
-              return _context.TimeSlot != null ? 
-                          View(await _context.TimeSlot.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.TimeSlot'  is null.");
+            List<TimeSlotIndexViewModel> timeSlotData = await (from ts in _context.TimeSlot
+                               join doctor in _context.Doctor
+                                on ts.DoctorId equals doctor.DoctorId
+                               orderby ts.TimeSlotDate
+                               select new TimeSlotIndexViewModel
+                               {
+                                   TimeSlotId = ts.TimeSlotId,
+                                   TimeSlotDate = ts.TimeSlotDate,
+                                   StartTime = ts.StartTime,
+                                   EndTime = ts.EndTime,
+                                   DoctorName = doctor.FullName
+                               }).ToListAsync();
+
+            return View(timeSlotData);
         }
 
         // GET: TimeSlots/Details/5
@@ -48,7 +59,12 @@ namespace CPW211_EasyAppointmentManager.Controllers
         // GET: TimeSlots/Create
         public IActionResult Create()
         {
-            return View();
+            TimeSlotCreateViewModel viewModel = new();
+
+            // Get list of all doctors
+            viewModel.AllAvailableDoctors = _context.Doctor.OrderBy(d => d.LastName).ToList();
+
+            return View(viewModel);
         }
 
         // POST: TimeSlots/Create
@@ -56,11 +72,25 @@ namespace CPW211_EasyAppointmentManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TimeSlotId,TimeSlotDate,StartTime,EndTime,TimeSlotStatus")] TimeSlot timeSlot)
+        public async Task<IActionResult> Create(TimeSlotCreateViewModel timeSlot)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(timeSlot);
+                TimeSlot newTimeSlot = new()
+                {
+                    TimeSlotDate = timeSlot.TimeSlotDate,
+                    StartTime = timeSlot.StartTime,
+                    EndTime = timeSlot.EndTime,
+                    TimeSlotStatus = timeSlot.TimeSlotStatus,
+                    Doctor = new Doctor
+                    {
+                        DoctorId = timeSlot.ChosenDoctor
+                    }
+                };
+                // Tell EF that we have not modified the existing Doctor
+                _context.Entry(newTimeSlot.Doctor).State = EntityState.Unchanged;
+
+                _context.Add(newTimeSlot);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -99,6 +129,8 @@ namespace CPW211_EasyAppointmentManager.Controllers
             {
                 try
                 {
+                    // Tell EF that we have not modified the existing Doctor
+                    _context.Entry(timeSlot.Doctor).State = EntityState.Unchanged;
                     _context.Update(timeSlot);
                     await _context.SaveChangesAsync();
                 }
@@ -148,6 +180,8 @@ namespace CPW211_EasyAppointmentManager.Controllers
             var timeSlot = await _context.TimeSlot.FindAsync(id);
             if (timeSlot != null)
             {
+                // Tell EF that we have not modified the existing Doctor
+                _context.Entry(timeSlot.Doctor).State = EntityState.Unchanged;
                 _context.TimeSlot.Remove(timeSlot);
             }
             
