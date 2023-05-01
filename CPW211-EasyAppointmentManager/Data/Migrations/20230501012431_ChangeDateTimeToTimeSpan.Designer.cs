@@ -4,6 +4,7 @@ using CPW211_EasyAppointmentManager.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPW211_EasyAppointmentManager.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230501012431_ChangeDateTimeToTimeSpan")]
+    partial class ChangeDateTimeToTimeSpan
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,7 +277,7 @@ namespace CPW211_EasyAppointmentManager.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TimeSlotId"), 1L, 1);
 
-                    b.Property<int>("DoctorId")
+                    b.Property<int?>("DoctorId")
                         .HasColumnType("int");
 
                     b.Property<TimeSpan>("EndTime")
@@ -285,7 +287,6 @@ namespace CPW211_EasyAppointmentManager.Data.Migrations
                         .HasColumnType("time");
 
                     b.Property<DateTime?>("TimeSlotDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TimeSlotStatus")
@@ -582,9 +583,7 @@ namespace CPW211_EasyAppointmentManager.Data.Migrations
                 {
                     b.HasOne("CPW211_EasyAppointmentManager.Models.Doctor", "Doctor")
                         .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DoctorId");
 
                     b.Navigation("Doctor");
                 });

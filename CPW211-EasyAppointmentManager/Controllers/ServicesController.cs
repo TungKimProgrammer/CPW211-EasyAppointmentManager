@@ -36,7 +36,7 @@ namespace CPW211_EasyAppointmentManager.Controllers
             }
 
             var service = await _context.Service
-                .FirstOrDefaultAsync(m => m.ServiceId == id);
+                .FirstOrDefaultAsync(m => m.DoctorId == id);
             if (service == null)
             {
                 return NotFound();
@@ -90,7 +90,7 @@ namespace CPW211_EasyAppointmentManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ServiceId,Fee,ServiceName,ServiceTime")] Service service)
         {
-            if (id != service.ServiceId)
+            if (id != service.DoctorId)
             {
                 return NotFound();
             }
@@ -104,7 +104,7 @@ namespace CPW211_EasyAppointmentManager.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ServiceExists(service.ServiceId))
+                    if (!ServiceExists(service.DoctorId))
                     {
                         return NotFound();
                     }
@@ -127,7 +127,7 @@ namespace CPW211_EasyAppointmentManager.Controllers
             }
 
             var service = await _context.Service
-                .FirstOrDefaultAsync(m => m.ServiceId == id);
+                .FirstOrDefaultAsync(m => m.DoctorId == id);
             if (service == null)
             {
                 return NotFound();
@@ -157,7 +157,7 @@ namespace CPW211_EasyAppointmentManager.Controllers
 
         private bool ServiceExists(int id)
         {
-          return (_context.Service?.Any(e => e.ServiceId == id)).GetValueOrDefault();
+          return (_context.Service?.Any(e => e.DoctorId == id)).GetValueOrDefault();
         }
     }
 }

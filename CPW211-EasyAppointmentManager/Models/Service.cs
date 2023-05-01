@@ -11,15 +11,7 @@ namespace CPW211_EasyAppointmentManager.Models
         /// The Service's unique Identity
         /// </summary>
         [Key]
-        public int ServiceId { get; set; }
-
-        /// <summary>
-        /// The Fee of the Service provided
-        /// </summary>
-        [Display(Name = "Fee")]
-        [Required(ErrorMessage = "{0} is requried.")]
-        [DataType(DataType.Currency)]
-        public double Fee { get; set; }
+        public int DoctorId { get; set; }
 
         /// <summary>
         ///  The Service's Name
@@ -37,5 +29,13 @@ namespace CPW211_EasyAppointmentManager.Models
         public List<Doctor>? Doctors { get; set; }
 
         public List<Clinic>? Clinics { get; set; }
+
+        /// <summary>
+        /// The Fee of the Service provided
+        /// </summary>
+        [Display(Name = "Fee")]
+        [Required(ErrorMessage = "{0} is requried.")]
+        [DataType(DataType.Currency)]
+        public double Fee { get; set; }
     }
 }
