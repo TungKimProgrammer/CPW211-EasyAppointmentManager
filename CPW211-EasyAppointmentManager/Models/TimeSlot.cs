@@ -3,8 +3,12 @@ using System.Xml.Linq;
 
 namespace CPW211_EasyAppointmentManager.Models
 {
+    /// <summary>
+    /// Represents a single TimeSlot
+    /// </summary>
     public class TimeSlot
     {
+        [Key]
         public int TimeSlotId { get; set; }
 
         [Display(Name = "Date")]

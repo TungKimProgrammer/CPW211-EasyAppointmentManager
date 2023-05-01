@@ -180,8 +180,6 @@ namespace CPW211_EasyAppointmentManager.Controllers
             var timeSlot = await _context.TimeSlot.FindAsync(id);
             if (timeSlot != null)
             {
-                // Tell EF that we have not modified the existing Doctor
-                _context.Entry(timeSlot.Doctor).State = EntityState.Unchanged;
                 _context.TimeSlot.Remove(timeSlot);
             }
             
